@@ -1,0 +1,10 @@
+# editors
+.*.swp
+
+# toolchina generated
+build
+*.oxx
+*.o
+*.out
+*.so
+*.a
