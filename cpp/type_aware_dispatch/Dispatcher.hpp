@@ -16,13 +16,25 @@ protected:
 
 namespace detail
 {
+
+template<typename FinalType, typename M>
+void todo(FinalType& ft, BinaryMsg const& bin)
+{
+  ft.handle( deserialize<M>(bin) );
+}
+
 template<typename FinalType, typename C, typename H, typename ...T>
 struct RegistrationHelper
 {
   static void call(C& c)
   {
-    auto h = [](FinalType& ft, BinaryMsg const& bin) { ft.handle( deserialize<H>(bin) ); };
-    c[H::type()] = +h;
+    // NOTE: although lambda version is way nicer, GCC generates 6x bigger code for that, clang 2x.
+    //       apparently both misse some important optimization. too bad... :(
+#if 0
+    c[H::type()] = +[](FinalType& ft, BinaryMsg const& bin) { ft.handle( deserialize<H>(bin) ); };
+#else
+    c[H::type()] = todo<FinalType,H>;
+#endif
     RegistrationHelper<FinalType, C, T...>::call(c);
   }
 };
@@ -40,7 +52,9 @@ struct CustomDispatcher: public Dispatcher
 {
   CustomDispatcher(void)
   {
+    // NOTE: compile time check for unique type-ids can be added here!
     detail::RegistrationHelper<FinalType, decltype(handlers_), M..., void>::call(handlers_);
+    assert( handlers_.size() == sizeof...(M) && "non-unique message ids detected" );
   }
 
   virtual void dispatch(BinaryMsg const& bin)
