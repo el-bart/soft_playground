@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cstring>
+#include <cassert>
 
 
 struct BinaryMsg
@@ -16,7 +17,7 @@ BinaryMsg serialize(M const& m)
 {
   BinaryMsg b;
   b.type_ = M::type();
-  b.data_.reserve(sizeof(m));
+  b.data_.resize(sizeof(m));
   memcpy(b.data_.data(), &m, sizeof(m));
   return b;
 }
