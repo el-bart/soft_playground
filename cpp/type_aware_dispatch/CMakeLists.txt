@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 2.6)
+project(tad)
+set(SOURCES main.cpp)
+
+add_executable(tad ${SOURCES})
+
+add_definitions(-Wall)
+add_definitions(-std=c++11)
+
+set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -g3")
+set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -flto")
+
+add_subdirectory(Msgs)
