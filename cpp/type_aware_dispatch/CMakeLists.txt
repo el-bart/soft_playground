@@ -8,6 +8,8 @@ add_definitions(-Wall)
 add_definitions(-std=c++11)
 add_definitions(-I${CMAKE_CURRENT_SOURCE_DIR})
 
+#set(CMAKE_CXX_COMPILER clang++)
+
 set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -g3")
 set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address")
 
