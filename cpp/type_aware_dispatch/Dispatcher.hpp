@@ -8,7 +8,7 @@
 
 struct Dispatcher
 {
-  void handle(BinaryMsg const& bin)
+  void dispatch(BinaryMsg const& bin)
   {
     auto it = handlers_.find(bin.type_);
     if(it==std::end(handlers_))
@@ -26,6 +26,11 @@ protected:
 
 
 template<typename FinalType, typename ...M>
-struct CustomDispatcher: public Dispatcher
+struct CustomDispatcher: public Dispatcher,
+                         public Handle<FinalType, M>...
 {
+  CustomDispatcher(void):
+    Handle<FinalType, M>(*this)...
+  {
+  }
 };

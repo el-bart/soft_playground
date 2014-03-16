@@ -16,18 +16,20 @@ protected:
 
 
 template<typename FinalType, typename M>
-struct Handle
+struct Handle: public Handler
 {
-  explicit Handle(FinalType& ft)
+  template<typename D>
+  explicit Handle(D& d)
   {
-    ft.handlers_[M::type()] = this;
+    d.handlers_[M::type()] = this;
   }
 
   virtual void handle(BinaryMsg const& bin)
   {
     assert( bin.type_ == M::type() );
-    M&   msg = *static_cast<M*>(bin.data_.data());
-    auto h   = boost::polymorphic_downcast<FinalType>(this);
+    auto  tmp = bin;
+    M&    msg = *reinterpret_cast<M*>(tmp.data_.data());
+    auto* h   = boost::polymorphic_downcast<FinalType*>(this);
     assert(h);
     h->handle(msg);
   }
