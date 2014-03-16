@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(tad)
-set(SOURCES main.cpp)
+set(SOURCES main.cpp MyDispatcher.cpp)
 
 add_executable(tad ${SOURCES})
 
