@@ -1,6 +1,44 @@
 #!/bin/bash
 set -e
 
+function generate_messages_for_automatic()
+{
+  for((i=2; i<=$1; ++i))
+  do
+    CODE="$CODE Msg$i,"
+  done
+  CODE="$CODE Msg1"
+
+  sed -i '/^ *Msg[0-9]*,$/d' main.cpp
+  sed -i '/^ *Msg[0-9]*$/d' main.cpp
+  sed -i "s:^ *>$:$CODE>:" main.cpp
+  sed -i "s:<[0-9]\+>:<$1>:" main.cpp
+  echo
+  # TODO
+}
+
+function generate_messages_for_manual()
+{
+  echo
+  # TODO
+}
+
+function generate_messages_for()
+{
+  case "$1" in
+    "automatic")
+      generate_messages_for_automatic "$2"
+      ;;
+    "manual")
+      generate_messages_for_manual "$2"
+      ;;
+    *)
+      echo "unknown generator: $d" >&2
+      exit 2
+      ;;
+  esac
+}
+
 function convert_time()
 {
   awk '{print $2}' | sed -e 's:m:*60 + :' -e 's:s:*1:' | bc -ql
@@ -25,6 +63,8 @@ function opt_build()
 }
 
 OUT=$(mktemp -d)
+echo "temoporary dir: $OUT"
+echo
 
 #for((i=10; i<250; i+=10))
 for((i=10; i<30; i+=10))
@@ -36,11 +76,12 @@ do
     mkdir "$DIR"
     cp -r automatic/ manual/ "$DIR/"
     cd "$DIR"
-    for d in automatic manual
+    for d in manual automatic
     do
       (
         set -e
         cd "$d"
+        generate_messages_for "$d" "$i"
         opt_build "speed" "$i" "$d"
         opt_build "size"  "$i" "$d"
       )
