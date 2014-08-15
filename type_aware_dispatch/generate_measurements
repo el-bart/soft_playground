@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+function convert_time()
+{
+  awk '{print $2}' | sed -e 's:m:*60 + :' -e 's:s:*1:' | bc -ql
+}
+
+function opt_build()
+{
+  local opt="$1"
+  local msgs="$2"
+  local impl="$3"
+  (
+    set -e
+    mkdir -p "build/$opt"
+    cd "build/$opt"
+    cmake ../../ -DCMAKE_BUILD_TYPE=Release -DOPTIMIZE_FOR="$opt" -G Ninja > /dev/null
+    echo -n "build time for:  $msgs / $impl / $opt = "
+    ( time ninja ) 2>&1 | grep real | convert_time
+    echo -n "run time:        $msgs / $impl / $opt = "
+    ( time ./tad ) 2>&1 | grep real | convert_time
+    echo    "binary size for: $msgs / $impl / $opt = $(ls -s --block-size=1 tad | awk '{ print $1}')"
+  )
+}
+
+OUT=$(mktemp -d)
+
+#for((i=10; i<250; i+=10))
+for((i=10; i<30; i+=10))
+do
+  echo "measuring for messages # ${i}..."
+  (
+    set -e
+    DIR="$OUT/$i"
+    mkdir "$DIR"
+    cp -r automatic/ manual/ "$DIR/"
+    cd "$DIR"
+    for d in automatic manual
+    do
+      (
+        set -e
+        cd "$d"
+        opt_build "speed" "$i" "$d"
+        opt_build "size"  "$i" "$d"
+      )
+    done
+  )
+done
