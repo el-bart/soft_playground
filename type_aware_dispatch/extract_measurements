@@ -1,0 +1,47 @@
+#!/bin/bash
+set -e
+
+if [ $# -ne 1 ]
+then
+  echo "$0 <gen.log>" >&2
+  exit 1
+fi
+
+LOG="$1"
+shift
+
+# problem sizes
+sed 's#.*: *\([0-9]\+\) / .*#\1#' "$LOG" | grep '^[0-9]\+$' | sort -un > N.log
+
+# build time data
+{
+  grep "^build time .* / speed " "$LOG" | grep automatic | sed 's:.* ::' > A.log
+  grep "^build time .* / speed " "$LOG" | grep manual    | sed 's:.* ::' > M.log
+
+  echo -e "# build time"
+  echo -e "# N | manual | automatic"
+  paste N.log M.log A.log
+} > build_time.log
+
+# run time data
+{
+  grep "^run time.* / speed " "$LOG" | grep automatic | sed 's:.* ::' > A.log
+  grep "^run time.* / speed " "$LOG" | grep manual    | sed 's:.* ::' > M.log
+
+  echo -e "# run time"
+  echo -e "# N | manual | automatic"
+  paste N.log M.log A.log
+} > run_time.log
+
+# binary size data
+{
+  grep "^binary size.* / speed " "$LOG" | grep automatic | sed 's:.* ::' > A.log
+  grep "^binary size.* / speed " "$LOG" | grep manual    | sed 's:.* ::' > M.log
+
+  echo -e "# run time"
+  echo -e "# N | manual | automatic"
+  paste N.log M.log A.log
+} > binary_size.log
+
+# clean up
+rm -f N.log A.log M.log
