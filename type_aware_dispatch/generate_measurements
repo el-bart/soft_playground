@@ -13,14 +13,31 @@ function generate_messages_for_automatic()
   sed -i '/^ *Msg[0-9]*$/d' main.cpp
   sed -i "s:^ *>$:$CODE>:" main.cpp
   sed -i "s:<[0-9]\+>:<$1>:" main.cpp
-  echo
-  # TODO
 }
 
 function generate_messages_for_manual()
 {
-  echo
-  # TODO
+  cat > "MyDispatcher.cpp" <<EOF
+#include "MyDispatcher.hpp"
+
+void MyDispatcher::dispatch(BinaryMsg const& bin)
+{
+$(
+  for((i=1; i<=$1; ++i))
+  do
+    cat <<EOIF
+  if( bin.type_ == Msg${i}::type() )
+  {
+    handle( deserialize<Msg${i}>(bin) );
+    return;
+  }
+EOIF
+  done
+)
+}
+EOF
+
+  sed -i "s:<[0-9]\+>:<$1>:" main.cpp
 }
 
 function generate_messages_for()
