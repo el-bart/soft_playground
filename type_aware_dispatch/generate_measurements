@@ -3,9 +3,9 @@ set -e
 
 function generate_messages_for_automatic()
 {
-  for((i=2; i<=$1; ++i))
+  for((j=2; j<=$1; ++j))
   do
-    CODE="$CODE Msg$i,"
+    CODE="$CODE Msg$j,"
   done
   CODE="$CODE Msg1"
 
@@ -23,12 +23,12 @@ function generate_messages_for_manual()
 void MyDispatcher::dispatch(BinaryMsg const& bin)
 {
 $(
-  for((i=1; i<=$1; ++i))
+  for((j=1; j<=$1; ++j))
   do
     cat <<EOIF
-  if( bin.type_ == Msg${i}::type() )
+  if( bin.type_ == Msg${j}::type() )
   {
-    handle( deserialize<Msg${i}>(bin) );
+    handle( deserialize<Msg${j}>(bin) );
     return;
   }
 EOIF
@@ -83,8 +83,7 @@ OUT=$(mktemp -d)
 echo "temoporary dir: $OUT"
 echo
 
-#for((i=10; i<250; i+=10))
-for((i=10; i<30; i+=10))
+for((i=10; i<250; i+=10))
 do
   echo "measuring for messages # ${i}..."
   (

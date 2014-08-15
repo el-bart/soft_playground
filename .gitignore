@@ -8,3 +8,6 @@ build
 *.out
 *.so
 *.a
+
+# misc
+*.log
