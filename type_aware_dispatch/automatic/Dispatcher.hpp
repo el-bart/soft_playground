@@ -18,7 +18,7 @@ namespace detail
 {
 
 template<typename FinalType, typename M>
-void todo(FinalType& ft, BinaryMsg const& bin)
+void forwarder(FinalType& ft, BinaryMsg const& bin)
 {
   ft.handle( deserialize<M>(bin) );
 }
@@ -33,7 +33,7 @@ struct RegistrationHelper
 #if 0
     c[H::type()] = +[](FinalType& ft, BinaryMsg const& bin) { ft.handle( deserialize<H>(bin) ); };
 #else
-    c[H::type()] = todo<FinalType,H>;
+    c[H::type()] = forwarder<FinalType,H>;
 #endif
     RegistrationHelper<FinalType, C, T...>::call(c);
   }
