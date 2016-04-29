@@ -19,8 +19,8 @@ auto makeNumbers(const unsigned count)
   std::mt19937_64                  gen(42);
   //constexpr auto                   range = 1000l*1000l*1000l*1000l*1000l;
   //constexpr auto                   range = 1000*1000;
-  //constexpr auto                   range = 1;
-  constexpr auto                   range = 0.0001;
+  constexpr auto                   range = 1;
+  //constexpr auto                   range = 0.0001;
   std::uniform_real_distribution<> prng(-range, +range);
 
   std::vector<std::string> out;
@@ -48,7 +48,7 @@ void measure(C const& c, F&& convert)
   const auto stop = Clock::now();
   const auto us   = std::chrono::duration_cast<std::chrono::microseconds>( stop - start );
 
-  if(true)
+  if(false)
     for(auto const& str: { c.at(0).c_str(), "123456789.123456789", "1.2", "42", "0.13", "0.00000000001234" })
       cout << "example conversion: " << str << " -> " << std::setprecision(20) << convert(str) << endl;
   cout << "resulting value: " <<  std::setprecision(20) << out << endl;
@@ -154,6 +154,7 @@ int main()
   cout.flush();
   saveToFile(in);
   cout << "done!" << endl;
+  cout << endl;
 
 
   cout << "MANUAL<uint64_t>:" << endl;
