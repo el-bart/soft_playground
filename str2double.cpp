@@ -39,8 +39,8 @@ void measure(C const& c, F&& convert)
   const auto stop = Clock::now();
   const auto us   = std::chrono::duration_cast<std::chrono::microseconds>( stop - start );
 
-  if(false)
-    for(auto const& str: { c.at(0).c_str(), "123456789.123456789", "1.2", "42", "0.13" })
+  if(true)
+    for(auto const& str: { c.at(0).c_str(), "123456789.123456789", "1.2", "42", "0.13", "0.00000000001234" })
       cout << "example conversion: " << str << " -> " << std::setprecision(20) << convert(str) << endl;
   cout << "resulting value: " <<  std::setprecision(20) << out << endl;
   cout << "time: \t" << us.count() << "[us]" << endl;
@@ -62,34 +62,35 @@ double implScanf(std::string const& in)
 
 double implManualNoSign(std::string::const_iterator begin, const std::string::const_iterator end)
 {
-  auto   it  = begin;
-  double out = 0;
+  auto     it  = begin;
+  uint64_t pre = 0;
 
   for(; it!=end; ++it)
   {
     if( !isdigit(*it) )
       break;
-    out *= 10;
-    out += *it-'0';
+    pre *= 10;
+    pre += *it-'0';
   }
   if(it==end)
-    return out;
+    return pre;
 
   if( *it!='.' )
     throw std::runtime_error{"1: NaN..."};
   ++it;
 
-  double div = .1;
+  uint64_t div  = 1;
+  uint64_t post = 0;
   for(; it!=end; ++it)
   {
     if( not isdigit(*it) )
       throw std::runtime_error{"2: NaN..."};
-    const auto c = *it-'0';
-    out += c*div;
-    div /= 10;
+    post *= 10;
+    post += *it-'0';
+    div  *= 10;
   }
 
-  return out;
+  return double(pre) + double(post)/double(div);
 }
 
 double implManual(std::string const& in)
@@ -114,8 +115,8 @@ int main()
   cout << std::fixed;
 
   cout << "preparing data... ";
-  //const auto in = makeNumbers(1000*1000);
-  const auto in = makeNumbers(5);
+  const auto in = makeNumbers(1000*1000);
+  //const auto in = makeNumbers(5);
   cout << "done!" << endl;
 
   cout << "MANUAL:" << endl;
