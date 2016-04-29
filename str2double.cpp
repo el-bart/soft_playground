@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <fstream>
 #include <sstream>
 #include <iostream>
 #include <typeinfo>
@@ -121,14 +122,39 @@ double implManual(std::string const& in)
 }
 
 
+template<typename C>
+void saveToFile(C const& c)
+{
+  std::ofstream of;
+  of.open("data.bc");
+  if( not of.is_open() )
+    throw std::runtime_error{"failed to open file"};
+
+  of << "#!/usr/bin/bc -ql" << endl;
+  of << "scale = 100" << endl;
+  of << "out = 0" << endl;
+  for(auto& e: c)
+    of << "out += " << e << endl;
+  of << "out" << endl;
+  of << "quit" << endl;
+}
+
+
 int main()
 {
   cout << std::fixed;
 
   cout << "preparing data... ";
+  cout.flush();
   const auto in = makeNumbers(1000*1000);
   //const auto in = makeNumbers(5);
   cout << "done!" << endl;
+
+  cout << "writing to file... ";
+  cout.flush();
+  saveToFile(in);
+  cout << "done!" << endl;
+
 
   cout << "MANUAL<uint64_t>:" << endl;
   measure(in, implManual<uint64_t>);
