@@ -56,6 +56,18 @@ void measure(C const& c, F&& convert)
 }
 
 
+template<typename C, typename F>
+void writeConvertedToFile(C const& c, F&& convert, std::string const& path)
+{
+  std::ofstream of;
+  of.open(path);
+  if( not of.is_open() )
+    throw std::runtime_error{"failed to open " + path + " file"};
+  for(const auto& e: c)
+    of << e << " -> " << convert(e) << endl;
+}
+
+
 double implBoost(std::string const& in)
 {
   return boost::lexical_cast<double>(in);
@@ -159,17 +171,21 @@ int main()
 
   cout << "MANUAL<uint64_t>:" << endl;
   measure(in, implManual<uint64_t>);
+  writeConvertedToFile(in, implManual<uint64_t>, "manual_uint64_t.log");
   cout << endl;
 
   cout << "MANUAL<double>:" << endl;
   measure(in, implManual<double>);
+  writeConvertedToFile(in, implManual<double>, "manual_double.log");
   cout << endl;
 
   cout << "SCANF:" << endl;
   measure(in, implScanf);
+  writeConvertedToFile(in, implScanf, "scanf.log");
   cout << endl;
 
   cout << "BOOST:" << endl;
   measure(in, implBoost);
+  writeConvertedToFile(in, implBoost, "boost.log");
   cout << endl;
 }
