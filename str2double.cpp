@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include <vector>
+#include <sstream>
 #include <iostream>
 #include <typeinfo>
 #include <boost/lexical_cast.hpp>
@@ -15,13 +16,20 @@ using std::endl;
 auto makeNumbers(const unsigned count)
 {
   std::mt19937_64                  gen(42);
-  constexpr auto                   range = 1000*1000;
+  //constexpr auto                   range = 1000l*1000l*1000l*1000l*1000l;
+  //constexpr auto                   range = 1000*1000;
+  //constexpr auto                   range = 1;
+  constexpr auto                   range = 0.0001;
   std::uniform_real_distribution<> prng(-range, +range);
 
   std::vector<std::string> out;
   out.reserve(count);
   for(auto i=0u; i<count; ++i)
-    out.push_back( boost::lexical_cast<std::string>( prng(gen) ) );
+  {
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(20) << prng(gen);
+    out.push_back( oss.str() );
+  }
 
   return out;
 }
@@ -60,10 +68,11 @@ double implScanf(std::string const& in)
 }
 
 
+template<typename T>
 double implManualNoSign(std::string::const_iterator begin, const std::string::const_iterator end)
 {
-  auto     it  = begin;
-  uint64_t pre = 0;
+  auto it  = begin;
+  T    pre = 0;
 
   for(; it!=end; ++it)
   {
@@ -79,8 +88,8 @@ double implManualNoSign(std::string::const_iterator begin, const std::string::co
     throw std::runtime_error{"1: NaN..."};
   ++it;
 
-  uint64_t div  = 1;
-  uint64_t post = 0;
+  T div  = 1;
+  T post = 0;
   for(; it!=end; ++it)
   {
     if( not isdigit(*it) )
@@ -93,20 +102,22 @@ double implManualNoSign(std::string::const_iterator begin, const std::string::co
   return double(pre) + double(post)/double(div);
 }
 
+template<typename T>
 double implManual(std::string const& in)
 {
   if( in.empty() )
-    throw std::runtime_error{"2: NaN..."};
+    throw std::runtime_error{"3: NaN..."};
 
   switch(in[0])
   {
-    case '-': return -1 * implManualNoSign( begin(in)+1, end(in) );
-    case '+': return +1 * implManualNoSign( begin(in)+1, end(in) );
+    case '-': return -1 * implManualNoSign<T>( begin(in)+1, end(in) );
+    case '.':
+    case '+': return +1 * implManualNoSign<T>( begin(in)+1, end(in) );
   }
   if( not isdigit(in[0]) )
-    throw std::runtime_error{"3: NaN..."};
+    throw std::runtime_error{"4: NaN..."};
 
-  return implManualNoSign( begin(in), end(in) );
+  return implManualNoSign<T>( begin(in), end(in) );
 }
 
 
@@ -119,8 +130,12 @@ int main()
   //const auto in = makeNumbers(5);
   cout << "done!" << endl;
 
-  cout << "MANUAL:" << endl;
-  measure(in, implManual);
+  cout << "MANUAL<uint64_t>:" << endl;
+  measure(in, implManual<uint64_t>);
+  cout << endl;
+
+  cout << "MANUAL<double>:" << endl;
+  measure(in, implManual<double>);
   cout << endl;
 
   cout << "SCANF:" << endl;
