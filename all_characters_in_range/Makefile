@@ -6,7 +6,7 @@ BINS:=$(SRCS:.cpp=.out)
 all: $(BINS)
 
 %.out: %.cpp | Makefile
-	g++ -MD -Wall -O3 -o "$@" $<
+	$(CXX) -MD -Wall -O3 -o "$@" $<
 
 .PHONY: clean
 clean:
