@@ -26,7 +26,7 @@ private:
 auto generateTestData()
 {
   std::cout << "generating pseudo-radnom sequence..." << std::endl;
-  const Timer t;
+  const Timer t{};
   const auto seed = 42;
   std::mt19937 gen{seed};
   std::uniform_int_distribution<char> dist{32, 126};    // stick with printable ascii codes
@@ -65,7 +65,7 @@ void test(F&& f)
   const auto data = generateTestData();
   auto errors = std::string::size_type{0};
 
-  const Timer t;
+  const Timer t{};
   for(auto c: data)
     errors += static_cast<unsigned>( f(c) );    // avoids branches here
   const auto elapsed = t.elapsed();
