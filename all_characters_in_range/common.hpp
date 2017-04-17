@@ -62,7 +62,7 @@ void sanityCheck(F& f)
 
 
 template<typename F>
-void test(F& f)
+void test(F&& f)
 {
   sanityCheck(f);
 
