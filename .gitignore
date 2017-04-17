@@ -5,6 +5,7 @@
 build
 *.oxx
 *.o
+*.d
 *.out
 *.so
 *.a
