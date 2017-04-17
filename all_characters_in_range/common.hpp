@@ -67,7 +67,7 @@ void test(F&& f)
 
   const Timer t;
   for(auto c: data)
-    errors += static_cast<unsigned>( f(c) );
+    errors += static_cast<unsigned>( f(c) );    // avoids branches here
   const auto elapsed = t.elapsed();
 
   std::cout << "got " << errors << " errors" << std::endl;
