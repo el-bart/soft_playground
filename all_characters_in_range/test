@@ -1,5 +1,4 @@
 #!/bin/bash -ex
-time pm "$@"
 for b in \
   ./switch_case.out \
   ./if_else.out \
