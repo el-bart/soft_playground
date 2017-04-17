@@ -47,17 +47,13 @@ template<typename F>
 void sanityCheck(F& f)
 {
   const auto okChars = std::string{"Just Checking"};
-  for(auto c=char{32}; c<127; ++c)
-    if( okChars.find(c) == std::string::npos )
-    {
-      if( f(c) != false )
-        throw std::logic_error{"test function is invalid"};
-    }
-    else
-    {
-      if( f(c) != true )
-        throw std::logic_error{"test function is invalid"};
-    }
+  for(auto c=char{32}; c<char{127}; ++c)
+  {
+    const auto isOkChar = ( okChars.find(c) != std::string::npos );
+    const auto funcRet = f(c);
+    if( isOkChar != funcRet )
+      throw std::logic_error{"test function is invalid"};
+  }
 }
 
 
