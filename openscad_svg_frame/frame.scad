@@ -41,12 +41,12 @@ module model_slot_base(name)
       // model
       frame(wall);
       // side wall cuts
-      children(0);
+      children();
     }
   }
 
   cut_in_frame()
-    children(0);
+    children();
 }
 
 module model_slot(name)
@@ -55,20 +55,25 @@ module model_slot(name)
   {
     minkowski()
     {
-//      linear_extrude(2.7)
+      linear_extrude(2.7)
         model_slot_base(name)
-          children(0);
-//      sphere(r=wall/2);
+          children();
+      sphere(r=wall/2);
     }
     // cut-off for the bottom roundings
-    #translate([-50, -50, 0])
-      cube([200, 200, 100]);
+    translate([-50, -50, 0])
+      cube(300*[1,1,1]);
   }
 }
 
 %shape_placeholder();
 model_slot("random_shape.svg")
 {
-  translate([0, 40, 0])
-    square([70, 20]);
+  // some location(s) that shall be removed from the overall shape:
+  // bottom
+  translate([40, -10, 0])
+    square([60, 20]);
+  // top
+  translate([60, 110, 0])
+    square([50, 20]);
 }
