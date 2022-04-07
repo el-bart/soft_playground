@@ -59,7 +59,7 @@ module model_slot(name)
       linear_extrude(wall_h)
         model_slot_base(name)
           children();
-      sphere(r=wall/2);
+      sphere(r=wall/2, $fn=20);
     }
     // cut-off for the bottom roundings
     // we're only interested in the top of the model
