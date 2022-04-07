@@ -1,0 +1,74 @@
+eps = 0.01;
+wall = 2;
+spacing = 1;
+
+module model_import(file)
+{
+  offset(eps)
+    import(file);
+}
+
+module shape_placeholder()
+{
+  linear_extrude(2*wall)
+    model_import("random_shape.svg");
+}
+
+module model_slot_base(name)
+{
+  module extended_base(r)
+  {
+    minkowski()
+    {
+      model_import(name);
+      circle(r);
+    }
+  }
+
+  module frame(wall)
+  {
+    difference()
+    {
+      extended_base(spacing + wall/2 + 0.5);
+      extended_base(spacing + wall/2);
+    }
+  }
+
+  module cut_in_frame()
+  {
+    difference()
+    {
+      // model
+      frame(wall);
+      // side wall cuts
+      children(0);
+    }
+  }
+
+  cut_in_frame()
+    children(0);
+}
+
+module model_slot(name)
+{
+  intersection()
+  {
+    minkowski()
+    {
+//      linear_extrude(2.7)
+        model_slot_base(name)
+          children(0);
+//      sphere(r=wall/2);
+    }
+    // cut-off for the bottom roundings
+    #translate([-50, -50, 0])
+      cube([200, 200, 100]);
+  }
+}
+
+%shape_placeholder();
+model_slot("random_shape.svg")
+{
+  translate([0, 40, 0])
+    square([70, 20]);
+}
