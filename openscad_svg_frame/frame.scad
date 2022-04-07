@@ -1,5 +1,6 @@
 eps = 0.01;
 wall = 2;
+wall_h = 4;
 spacing = 1;
 
 module model_import(file)
@@ -55,12 +56,13 @@ module model_slot(name)
   {
     minkowski()
     {
-      linear_extrude(2.7)
+      linear_extrude(wall_h)
         model_slot_base(name)
           children();
       sphere(r=wall/2);
     }
     // cut-off for the bottom roundings
+    // we're only interested in the top of the model
     translate([-50, -50, 0])
       cube(300*[1,1,1]);
   }
