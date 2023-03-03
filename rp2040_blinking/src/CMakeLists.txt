@@ -20,7 +20,7 @@ pico_sdk_init()
 
 add_compile_options(-Wall)
 
-add_executable(blink blink.c)
+add_executable(blink blink.cpp)
 target_link_libraries(blink pico_stdlib)
 
 # create map/bin/hex/uf2 file etc.
