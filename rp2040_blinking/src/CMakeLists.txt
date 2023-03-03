@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 
 # Pull in SDK (must be before project)
 include(pico_sdk_import.cmake)
+# ^^ is effectively vv
+#set(PICO_SDK_PATH $ENV{PICO_SDK_PATH})
+#include(${PICO_SDK_PATH}/pico_sdk_init.cmake)
 
 project(pico_blink C CXX ASM)
 
