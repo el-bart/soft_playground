@@ -1,5 +1,6 @@
 #include "pico/stdlib.h"
 #include <vector>
+#include <stdexcept>
 
 int main()
 {
@@ -12,9 +13,16 @@ int main()
   while (true)
   {
     constexpr auto delay = 100;
-    gpio_put(LED_PIN, 1);
-    sleep_ms(delay);
-    gpio_put(LED_PIN, 0);
-    sleep_ms(delay);
+    try
+    {
+      gpio_put(LED_PIN, 1);
+      sleep_ms(delay);
+      throw std::runtime_error{"whazzup!"};
+    }
+    catch(...)
+    {
+      gpio_put(LED_PIN, 0);
+      sleep_ms(delay);
+    }
   }
 }

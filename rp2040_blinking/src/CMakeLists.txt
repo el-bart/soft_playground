@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
+set(PICO_CXX_ENABLE_EXCEPTIONS true) # exceptions are off by default
+
 # Pull in SDK (must be before project)
 include(pico_sdk_import.cmake)
 # ^^ is effectively vv
@@ -19,6 +21,8 @@ endif()
 pico_sdk_init()
 
 add_compile_options(-Wall)
+# LTO does not seem to be operational atm
+#add_compile_options(-flto)
 
 add_executable(blink blink.cpp)
 target_link_libraries(blink pico_stdlib)
