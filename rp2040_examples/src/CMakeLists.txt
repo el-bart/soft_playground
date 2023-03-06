@@ -33,4 +33,8 @@ function(add_binary name)
 endfunction()
 
 add_binary(blink)
+
 add_binary(cpp_tour_blink)
+
+add_binary(pwm_dual_servo)
+target_link_libraries(pwm_dual_servo hardware_pwm)
