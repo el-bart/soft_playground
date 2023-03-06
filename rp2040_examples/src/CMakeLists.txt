@@ -24,8 +24,13 @@ add_compile_options(-Wall)
 # LTO does not seem to be operational atm
 #add_compile_options(-flto)
 
-add_executable(blink blink.cpp)
-target_link_libraries(blink pico_stdlib)
 
-# create map/bin/hex/uf2 file etc.
-pico_add_extra_outputs(blink)
+function(add_binary name)
+  add_executable(${name} ${name}.cpp)
+  target_link_libraries(${name} pico_stdlib)
+  # create map/bin/hex/uf2 file etc.
+  pico_add_extra_outputs(${name})
+endfunction()
+
+add_binary(blink)
+add_binary(cpp_tour_blink)
