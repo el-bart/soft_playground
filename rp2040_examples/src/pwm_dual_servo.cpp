@@ -24,22 +24,23 @@ int main()
   gpio_set_function(3, GPIO_FUNC_PWM);
 
   auto const max = std::numeric_limits<uint16_t>::max();
-  uint16_t top1 = max / 20u;
-  uint16_t top2 = max / 20u + 100u;
+  auto const servo_min = max / 20u;
+  auto const servo_max = 2*servo_min;
+  auto const servo_center = (servo_min + servo_max) / 2u;
 
   pwm_set_wrap(slice_num, max);                     // period
-  pwm_set_chan_level(slice_num, PWM_CHAN_A, top1);
-  pwm_set_chan_level(slice_num, PWM_CHAN_B, top2);
+  pwm_set_chan_level(slice_num, PWM_CHAN_A, servo_center);
+  pwm_set_chan_level(slice_num, PWM_CHAN_B, servo_center);
 
   pwm_set_enabled(slice_num, true);
 
   // make PWM nicely float, at different speeds
   while(true)
   {
-    sleep_ms(1);
-    top1 += 2;
-    top2 += 8;
-    pwm_set_chan_level(slice_num, PWM_CHAN_A, top1);
-    pwm_set_chan_level(slice_num, PWM_CHAN_B, top2);
+    for(auto level=servo_min; level<servo_max; level+=1)
+    {
+      sleep_ms(3);
+      pwm_set_chan_level(slice_num, PWM_CHAN_B, level);
+    }
   }
 }
