@@ -1,6 +1,7 @@
 #include "pico/stdlib.h"
 #include <vector>
 #include <stdexcept>
+#include <atomic>
 
 int main()
 {
@@ -9,12 +10,14 @@ int main()
   gpio_set_dir(LED_PIN, GPIO_OUT);
   std::vector<char> v;
   v.resize(240*1024);    // 256k is available in total. v.size()==250k is already a crash
+  std::atomic<bool> quit{true};
 
-  while (true)
+  do
   {
     constexpr auto delay = 100;
     try
     {
+      quit = false;
       gpio_put(LED_PIN, 1);
       sleep_ms(delay);
       throw std::runtime_error{"whazzup!"};
@@ -25,4 +28,5 @@ int main()
       sleep_ms(delay);
     }
   }
+  while (not quit);
 }
