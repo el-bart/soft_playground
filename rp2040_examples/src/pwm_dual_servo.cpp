@@ -13,6 +13,10 @@ int main()
 #else
   pwm_config_set_clkdiv_int_frac(&cfg, 38, 2); // div == 38 + 2/16
 #endif
+  {
+    auto const invert = false;
+    pwm_config_set_output_polarity(&cfg, invert, invert); // invert both channels
+  }
   pwm_init(slice_num, &cfg, false);
 
   // GPIO 2 & 3 -> PWM
