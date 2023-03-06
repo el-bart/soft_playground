@@ -44,7 +44,7 @@ flags+=(-w "$PWD")
 flags+=(-v "$vcs_root:/mnt")
 
 # forward programmer device
-picoprog=$(lsusb -d 2e8a:000c | grep 2e8a:000c | tr -d : | awk '{ print $2, $4 }' | sed -e 's#^#/dev/bus/usb #' | tr ' ' /)
+picoprog=$(lsusb -d 2e8a:000c | grep 2e8a:000c | tr -d : | awk '{ print $2, $4 }' | sed -e 's#^#/dev/bus/usb #' | tr ' ' / || true)
 if [ -e "$picoprog" ]
 then
   echo "$app: found $picoprog picoprog device"
