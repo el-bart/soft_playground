@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eux -o pipefail
+
+time g++ -O3 -DNDEBUG single_player.cpp -o single_player.out
+time ./single_player.out 300 5 9.50 100000 > single_player.csv
