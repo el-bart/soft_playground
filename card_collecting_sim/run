@@ -12,3 +12,5 @@ do
   time ./sim.out "$players" 300 5 9.50 100000 > "$data"
   ./player_stats "$data"
 done
+
+./stats
