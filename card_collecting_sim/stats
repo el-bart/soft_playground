@@ -38,11 +38,6 @@ set yrange [0:]
 unset key
 
 plot "stats.data" using 1:2 with lines lw 3 lc rgb "blue"
-#plot "stats.data" using 1:2
-#plot "stats.data" using 1:2 ps 1 pt 1
-#plot "stats.data" using 1:2 ls 2
-#plot "stats.data" using 1:2 ls 2 linecolor rgb "red" notitle
-#plot "stats.data" using 1:2 pointtype 6 ps 2 lc rgb "blue" notitle
 EOF
 } > stats_iterations.gpl
 
