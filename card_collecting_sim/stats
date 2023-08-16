@@ -2,6 +2,7 @@
 set -eu -o pipefail
 
 data="out/stats.data"
+summary="out/stats.txt"
 prefix="out/stats"
 
 function gpl_gen
@@ -34,24 +35,27 @@ EOF
   gnuplot "${prefix}_$surfix.gpl" > "${prefix}_$surfix.svg"
 }
 
-{
-echo "# players  iteartions_for_99  total_cost_per_player  avg_cards_per_player"
+
+echo -n > "$summary"
+echo "# players  iteartions_for_99  total_cost_per_player  avg_cards_per_player" > "$data"
 for f in out/players_*.data
 do
   n=$(sed 's#.*_0*\([0-9]\+\)\.data#\1#g' <<< "$f")
   #echo $n - $f
   read iteration _ sim_int total_cost avg_cards <<< "$(cat "$f" | tr '\t' ' ' | grep '^[0-9]\+ [0-9]\+ 99[0-9][0-9][0-9] ' | tr -d , | head -1)"
   #echo ">> $n $iteration $sim_int $total_cost $avg_cards"
-  { bc -ql | tr '\n' '\t' ; } <<EOF
+  {
+    { bc -ql | tr '\n' '\t' ; } <<EOF
 scale=2
 $n
 $iteration
 $total_cost/$n
 $avg_cards/$n
 EOF
-  echo
+    echo
+  } >> "$data"
+  echo "players=$n cost_pp=$(bc -ql <<< "scale=2 ; $total_cost/$n")" | tee -a "$summary"
 done
-} | tee "$data"
 
 
 gpl_gen "iterations to get 99% success rate" "number of players" "iterations" 2 "blue" "it_99"
