@@ -5,11 +5,11 @@ cd out
 
 {
 echo "# players  iteartions_for_99  total_cost_per_player  avg_cards_per_player"
-for f in players_*.csv
+for f in players_*.data
 do
-  n=$(sed 's/.*_\([0-9]\+\)\.csv/\1/g' <<< "$f")
+  n=$(sed 's#.*_0*\([0-9]\+\)\.data#\1#g' <<< "$f")
   #echo $n - $f
-  read iteration _ sim_int total_cost avg_cards <<< "$(cat "$f" | grep '^[0-9]\+, [0-9]\+, 99[0-9][0-9][0-9],' | tr -d , | head -1)"
+  read iteration _ sim_int total_cost avg_cards <<< "$(cat "$f" | tr '\t' ' ' | grep '^[0-9]\+ [0-9]\+ 99[0-9][0-9][0-9] ' | tr -d , | head -1)"
   #echo ">> $n $iteration $sim_int $total_cost $avg_cards"
   { bc -ql | tr '\n' '\t' ; } <<EOF
 scale=2
@@ -19,5 +19,31 @@ $total_cost/$n
 $avg_cards/$n
 EOF
   echo
-done  | sort -n
+done
 } | tee stats.data
+
+{
+cat <<EOF
+set terminal svg
+
+set title  "iterations to get 99% success rate" font "Times,20"
+set xlabel "number of players"  font "Times,16"
+set ylabel "iterations" font "Times,16
+
+set offset .05, .05
+
+#set xrange [0:]
+set yrange [0:]
+
+unset key
+
+plot "stats.data" using 1:2 with lines lw 3 lc rgb "blue"
+#plot "stats.data" using 1:2
+#plot "stats.data" using 1:2 ps 1 pt 1
+#plot "stats.data" using 1:2 ls 2
+#plot "stats.data" using 1:2 ls 2 linecolor rgb "red" notitle
+#plot "stats.data" using 1:2 pointtype 6 ps 2 lc rgb "blue" notitle
+EOF
+} > stats_iterations.gpl
+
+gnuplot stats_iterations.gpl > stats_iterations.svg
