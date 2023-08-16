@@ -25,7 +25,7 @@ set title  "$title" font "Times,20"
 set xlabel "$ox"  font "Times,16"
 set ylabel "$oy" font "Times,16
 
-#set xrange [0:]
+set xrange [0:2500]
 set yrange [0:]
 
 unset key
