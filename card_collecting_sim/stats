@@ -1,11 +1,42 @@
 #!/bin/bash
 set -eu -o pipefail
 
-cd out
+data="out/stats.data"
+prefix="out/stats"
+
+function gpl_gen
+{
+  local title=$1
+  local ox=$2
+  local oy=$3
+  local data_pos=$4
+  local color=$5
+  local surfix=$6
+  shift 6
+  {
+    cat <<EOF
+set terminal svg
+
+set title  "$title" font "Times,20"
+set xlabel "$ox"  font "Times,16"
+set ylabel "$oy" font "Times,16
+
+#set xrange [0:]
+set yrange [0:]
+
+unset key
+
+plot "$data" using 1:$data_pos with lines lw 3 lc rgb "$color"
+EOF
+  } > "${prefix}_$surfix.gpl"
+
+  echo "$0: plotting $title..."
+  gnuplot "${prefix}_$surfix.gpl" > "${prefix}_$surfix.svg"
+}
 
 {
 echo "# players  iteartions_for_99  total_cost_per_player  avg_cards_per_player"
-for f in players_*.data
+for f in out/players_*.data
 do
   n=$(sed 's#.*_0*\([0-9]\+\)\.data#\1#g' <<< "$f")
   #echo $n - $f
@@ -20,24 +51,9 @@ $avg_cards/$n
 EOF
   echo
 done
-} | tee stats.data
+} | tee "$data"
 
-{
-cat <<EOF
-set terminal svg
 
-set title  "iterations to get 99% success rate" font "Times,20"
-set xlabel "number of players"  font "Times,16"
-set ylabel "iterations" font "Times,16
-
-set offset .05, .05
-#set xrange [0:]
-set yrange [0:]
-
-unset key
-
-plot "stats.data" using 1:2 with lines lw 3 lc rgb "blue"
-EOF
-} > stats_iterations.gpl
-
-gnuplot stats_iterations.gpl > stats_iterations.svg
+gpl_gen "iterations to get 99% success rate" "number of players" "iterations" 2 "blue" "it_99"
+gpl_gen "total cost per player" "number of players" "cost" 3 "red" "total_cost_pp"
+gpl_gen "average cards per player" "number of players" "avg. cards count" 4 "cyan" "avg_cards_pp"
