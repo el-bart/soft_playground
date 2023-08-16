@@ -1,0 +1,44 @@
+#!/bin/bash
+set -eu -o pipefail
+
+data="$1"
+shift 1
+prefix="${data%%.data}"
+
+n=$(sed 's#.*_0*\([0-9]\+\)\.data#\1#' <<< "$data")
+
+
+function gpl_gen
+{
+  local title=$1
+  local ox=$2
+  local oy=$3
+  local data_pos=$4
+  local color=$5
+  local surfix=$6
+  shift 6
+  {
+    cat <<EOF
+set terminal svg
+
+set title  "$title" font "Times,20"
+set xlabel "$ox"  font "Times,16"
+set ylabel "$oy" font "Times,16
+
+#set xrange [0:]
+set yrange [0:]
+
+unset key
+
+plot "$data" using 1:$data_pos with lines lw 3 lc rgb "$color"
+EOF
+  } > "${prefix}_$surfix.gpl"
+
+  gnuplot "${prefix}_$surfix.gpl" > "${prefix}_$surfix.svg"
+}
+
+
+gpl_gen "samples per iteration" "iterations" "samples" 2 "orange" "samples"
+gpl_gen "integral of samples per iteration" "iterations" "integral of samples" 3 "blue" "samples_int"
+gpl_gen "total price per player" "iterations" "total price per player" 4 "red" "total_price_pp"
+gpl_gen "average cards count per player" "iterations" "average cards count per player" 5 "cyan" "avg_cards_pp"
