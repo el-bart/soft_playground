@@ -8,5 +8,7 @@ mkdir -p "out"
 for players in {1..10}
 do
   n=$(printf '%02d' "$players")
-  time ./sim.out "$players" 300 5 9.50 100000 > "out/players_${n}.data"
+  data="out/players_${n}.data"
+  time ./sim.out "$players" 300 5 9.50 100000 > "$data"
+  ./player_stats "$data"
 done
