@@ -31,7 +31,6 @@ set xlabel "number of players"  font "Times,16"
 set ylabel "iterations" font "Times,16
 
 set offset .05, .05
-
 #set xrange [0:]
 set yrange [0:]
 
