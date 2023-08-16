@@ -1,0 +1,23 @@
+#!/bin/bash
+set -eu -o pipefail
+
+cd out
+
+{
+echo "# players  iteartions_for_99  total_cost_per_player  avg_cards_per_player"
+for f in players_*.csv
+do
+  n=$(sed 's/.*_\([0-9]\+\)\.csv/\1/g' <<< "$f")
+  #echo $n - $f
+  read iteration _ sim_int total_cost avg_cards <<< "$(cat "$f" | grep '^[0-9]\+, [0-9]\+, 99[0-9][0-9][0-9],' | tr -d , | head -1)"
+  #echo ">> $n $iteration $sim_int $total_cost $avg_cards"
+  { bc -ql | tr '\n' '\t' ; } <<EOF
+scale=2
+$n
+$iteration
+$total_cost/$n
+$avg_cards/$n
+EOF
+  echo
+done  | sort -n
+} | tee stats.data
