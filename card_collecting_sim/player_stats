@@ -14,9 +14,16 @@ function gpl_gen
   local ox=$2
   local oy=$3
   local data_pos=$4
-  local color=$5
+  local color=\"$5\"
   local surfix=$6
-  shift 6
+  local style=$7
+  shift 7
+  opts=()
+  if [ "$style" = "lines" ]
+  then
+    opts+=(lw 3)
+    opts+=(lc rgb "$color")
+  fi
   {
     cat <<EOF
 set terminal svg
@@ -30,7 +37,7 @@ set yrange [0:]
 
 unset key
 
-plot "$data" using 1:$data_pos with lines lw 3 lc rgb "$color"
+plot "$data" using 1:$data_pos with $style ${opts[@]}
 EOF
   } > "${prefix}_$surfix.gpl"
 
@@ -38,7 +45,7 @@ EOF
 }
 
 
-gpl_gen "samples per iteration" "iterations" "samples" 2 "orange" "samples"
-gpl_gen "integral of samples per iteration" "iterations" "integral of samples" 3 "blue" "samples_int"
-gpl_gen "total price per player" "iterations" "total price per player" 4 "red" "total_price_pp"
-gpl_gen "average cards count per player" "iterations" "average cards count per player" 5 "cyan" "avg_cards_pp"
+gpl_gen "samples per iteration" "iterations" "samples" 2 "orange" "samples" "lines"
+gpl_gen "integral of samples per iteration" "iterations" "integral of samples" 3 "blue" "samples_int" "lines"
+gpl_gen "total price per player" "iterations" "total price per player" 4 "red" "total_price_pp" "points"
+gpl_gen "average cards count per player" "iterations" "average cards count per player" 5 "cyan" "avg_cards_pp" "points"
