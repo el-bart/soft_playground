@@ -94,17 +94,17 @@ auto simulate(F&& randCard, unsigned const playersCount, unsigned const uniqueCa
 
 void printCsv(SimHist sh)
 {
-  cout << "iteration, samples, samplesIntegral, totalPrice, cardsAvg\n";
+  cout << "# iteration  samples  samplesIntegral  totalPrice  cardsAvg\n";
   auto iteration = 0u;
   auto samplesIntegral = 0u;
   for(auto& e: sh.hist_)
   {
     samplesIntegral += e.samples_;
     cout
-      << std::fixed << std::setprecision(2) << iteration << ", "
-      << std::fixed << std::setprecision(2) << e.samples_ << ", "
-      << std::fixed << std::setprecision(2) << samplesIntegral << ", "
-      << std::fixed << std::setprecision(2) << e.totalPrice_ << ", "
+      << std::fixed << std::setprecision(2) << iteration << "\t"
+      << std::fixed << std::setprecision(2) << e.samples_ << "\t"
+      << std::fixed << std::setprecision(2) << samplesIntegral << "\t"
+      << std::fixed << std::setprecision(2) << e.totalPrice_ << "\t"
       << std::fixed << std::setprecision(2) << e.averageCards_ << "\n";
     ++iteration;
   }

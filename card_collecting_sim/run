@@ -7,5 +7,5 @@ mkdir -p "out"
 
 for players in {1..10}
 do
-  time ./sim.out "$players" 300 5 9.50 100000 > "out/players_${players}.csv"
+  time ./sim.out "$players" 300 5 9.50 100000 > "out/players_${players}.data"
 done
