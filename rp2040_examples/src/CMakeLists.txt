@@ -36,5 +36,7 @@ add_binary(blink)
 
 add_binary(cpp_tour_blink)
 
+add_binary(cpp_serial)
+
 add_binary(pwm_dual_servo)
 target_link_libraries(pwm_dual_servo hardware_pwm)
