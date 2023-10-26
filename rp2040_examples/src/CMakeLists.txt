@@ -38,5 +38,9 @@ add_binary(cpp_tour_blink)
 
 add_binary(cpp_serial)
 
+add_binary(cpp_json_format)
+target_include_directories(cpp_json_format SYSTEM PRIVATE .)
+pico_enable_stdio_uart(cpp_json_format ENABLED)
+
 add_binary(pwm_dual_servo)
 target_link_libraries(pwm_dual_servo hardware_pwm)
