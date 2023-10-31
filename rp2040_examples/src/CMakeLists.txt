@@ -44,3 +44,6 @@ pico_enable_stdio_uart(cpp_json_format ENABLED)
 
 add_binary(pwm_dual_servo)
 target_link_libraries(pwm_dual_servo hardware_pwm)
+
+add_binary(cpp_btle)
+target_link_libraries(cpp_btle pico_btstack_cyw43 pico_btstack_ble)
