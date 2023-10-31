@@ -10,6 +10,9 @@ include(pico_sdk_import.cmake)
 
 project(pico_blink C CXX ASM)
 
+#set(PICO_BOARD pico)
+set(PICO_BOARD pico_w)
+
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
@@ -23,6 +26,7 @@ pico_sdk_init()
 add_compile_options(-Wall)
 # LTO does not seem to be operational atm
 #add_compile_options(-flto)
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 
 function(add_binary name)
@@ -32,9 +36,13 @@ function(add_binary name)
   pico_add_extra_outputs(${name})
 endfunction()
 
-add_binary(blink)
-
-add_binary(cpp_tour_blink)
+if ("${PICO_BOARD}" MATCHES "^pico_w$")
+  message("PICO W does not have LED in usual spot - skipping these examples")
+else()
+  message("PICO non-W - building LED apps")
+  add_binary(blink)
+  add_binary(cpp_tour_blink)
+endif()
 
 add_binary(cpp_serial)
 
