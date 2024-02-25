@@ -56,6 +56,8 @@
 #include <string.h>
  
 #include "btstack.h"
+#include "pico/cyw43_arch.h"
+#include "pico/stdlib.h"
 
 #define RFCOMM_SERVER_CHANNEL 1
 #define HEARTBEAT_PERIOD_MS 1000
@@ -201,7 +203,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 
                 case HCI_EVENT_USER_CONFIRMATION_REQUEST:
                     // ssp: inform about user confirmation request
-                    printf("SSP User Confirmation Request with numeric value '%06"PRIu32"'\n", little_endian_read_32(packet, 8));
+                    printf("SSP User Confirmation Request with numeric value '%06" PRIu32 "'\n", little_endian_read_32(packet, 8));
                     printf("SSP User Confirmation Auto accept\n");
                     break;
 
@@ -271,3 +273,32 @@ int btstack_main(int argc, const char * argv[]){
 }
 /* EXAMPLE_END */
 
+
+
+#if 0
+// c&p from:
+// https://bluekitchen-gmbh.com/btstack/#how_to/#lst:btstackInit
+// ain't working atm...
+int main(){
+  // ... hardware init: watchdoch, IOs, timers, etc...
+
+  // setup BTstack memory pools
+  btstack_memory_init();
+
+  // select embedded run loop
+  btstack_run_loop_init(btstack_run_loop_embedded_get_instance());
+
+  // enable logging
+  hci_dump_init(hci_dump_embedded_stdout_get_instance());
+
+  // init HCI
+  hci_transport_t     * transport = hci_transport_h4_instance();
+  hci_init(transport, NULL);
+
+  // setup example
+  btstack_main(argc, argv);
+
+  // go
+  btstack_run_loop_execute();
+}
+#endif
