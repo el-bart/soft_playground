@@ -2,7 +2,7 @@ PRIMARY_SERVICE, GAP_SERVICE
 CHARACTERISTIC, GAP_DEVICE_NAME, READ, "GATT Counter"
 
 // add Battery Service
-#import <battery_service.gatt>
+//#import <battery_service.gatt>
 
 PRIMARY_SERVICE, GATT_SERVICE
 CHARACTERISTIC, GATT_DATABASE_HASH, READ,
