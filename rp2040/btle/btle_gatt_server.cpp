@@ -240,10 +240,27 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
       printf("packet_handler(): HCI_EVENT_DISCONNECTION_COMPLETE\n");
       le_notification_enabled = 0;
       break;
+
     case ATT_EVENT_CAN_SEND_NOW:
       printf("packet_handler(): ATT_EVENT_CAN_SEND_NOW\n");
       att_server_notify(con_handle, ATT_CHARACTERISTIC_0000FF11_0000_1000_8000_00805F9B34FB_01_VALUE_HANDLE, (uint8_t*) counter_string, counter_string_len);
       break;
+
+    case ATT_EVENT_CONNECTED:
+      printf("packet_handler(): ATT_EVENT_CONNECTED\n");
+      le_notification_enabled = 1;
+      break;
+
+      /*
+    case ATT_EVENT_ATTRIBUTE_READ:
+      printf("packet_handler(): ATT_EVENT_ATTRIBUTE_READ\n");
+      // packet contains details about attribute read extract attribute handle
+      uint16_t attribute_handle = (packet[1] | (packet[2] << 8));
+      // Provide the data back to the BLE stack here
+      att_server_notify_read(con_handle, attribute_handle, (uint8_t*) counter_string, counter_string_len);
+      break;
+      */
+
     default:
       printf("packet_handler(): unhandled (%d)\n", pt);
       break;
