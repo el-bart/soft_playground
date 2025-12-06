@@ -116,6 +116,7 @@ const uint8_t adv_data_len = sizeof(adv_data);
 
 // Setup our GATT service
 static void setup_gatt_service(void){
+  printf("setting up GATT service\n");
 
     l2cap_init();
 
@@ -188,8 +189,8 @@ static void beat(void){
 }
 
 static void heartbeat_handler(struct btstack_timer_source *ts){
+  beat();
     if (le_notification_enabled) {
-        beat();
         att_server_request_can_send_now_event(con_handle);
     }
 
