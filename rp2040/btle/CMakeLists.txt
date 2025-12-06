@@ -30,6 +30,7 @@ target_link_libraries(btle_gatt_server
   pico_stdlib
   pico_btstack_ble
   pico_btstack_cyw43
+  #pico_cyw43_arch_poll
   pico_cyw43_arch_threadsafe_background
 )
 # create map/bin/hex/uf2 file etc.
@@ -37,5 +38,5 @@ pico_add_extra_outputs(btle_gatt_server)
 
 pico_btstack_make_gatt_header(btle_gatt_server PUBLIC ${CMAKE_CURRENT_LIST_DIR}/btle_gatt_server.gatt)
 
-pico_enable_stdio_uart(btle_gatt_server 0)
+pico_enable_stdio_uart(btle_gatt_server 1)
 pico_enable_stdio_usb (btle_gatt_server 1)
