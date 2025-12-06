@@ -17,20 +17,25 @@ if (PICO_SDK_VERSION_STRING VERSION_LESS "1.5.1")
   message(FATAL_ERROR "Raspberry Pi Pico SDK version 1.5.1 (or later) required. Your version is ${PICO_SDK_VERSION_STRING}")
 endif()
 
-project(hello-pico C CXX ASM)
+project(hello-btle-gatt C CXX ASM)
 
 pico_sdk_init()
 
-message(XXXX ${CMAKE_CURRENT_LIST_DIR})
 include_directories(${CMAKE_CURRENT_LIST_DIR})
+
+add_compile_definitions(CYW43_LWIP=0)
 
 add_executable(btle_gatt_server btle_gatt_server.cpp)
 target_link_libraries(btle_gatt_server
   pico_stdlib
-  pico_cyw43_arch_none
+  pico_btstack_ble
+  pico_btstack_cyw43
+  pico_cyw43_arch_threadsafe_background
 )
 # create map/bin/hex/uf2 file etc.
 pico_add_extra_outputs(btle_gatt_server)
+
+pico_btstack_make_gatt_header(btle_gatt_server PUBLIC ${CMAKE_CURRENT_LIST_DIR}/btle_gatt_server.gatt)
 
 pico_enable_stdio_uart(btle_gatt_server 0)
 pico_enable_stdio_usb (btle_gatt_server 1)
