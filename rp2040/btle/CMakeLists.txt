@@ -21,10 +21,16 @@ project(hello-pico C CXX ASM)
 
 pico_sdk_init()
 
-add_executable(hello_world hello_world.cpp)
-target_link_libraries(hello_world pico_stdlib)
+add_executable(btle_gatt_server btle_gatt_server.cpp)
+target_link_libraries(btle_gatt_server
+  pico_stdlib
+  pico_cyw43_arch_lwip_threadsafe_background
+  btstack
+  bluetooth
+  cyw43_btstack
+)
 # create map/bin/hex/uf2 file etc.
-pico_add_extra_outputs(hello_world)
+pico_add_extra_outputs(btle_gatt_server)
 
-pico_enable_stdio_uart(hello_world 1)
-pico_enable_stdio_usb (hello_world 0)
+pico_enable_stdio_uart(btle_gatt_server 0)
+pico_enable_stdio_usb (btle_gatt_server 1)
