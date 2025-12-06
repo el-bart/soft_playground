@@ -218,13 +218,16 @@ static void heartbeat_handler(struct btstack_timer_source *ts){
 static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *packet, uint16_t size){
   UNUSED(channel);
   UNUSED(size);
+  printf("packet_handler(): entering\n");
 
   if (packet_type != HCI_EVENT_PACKET) return;
 
-  switch (hci_event_packet_get_type(packet))
+  auto const pt = hci_event_packet_get_type(packet);
+  switch (pt)
   {
     case BTSTACK_EVENT_STATE:
       {
+        printf("packet_handler(): BTSTACK_EVENT_STATE:\n");
         bd_addr_t local_addr;
         if (btstack_event_state_get_state(packet) != HCI_STATE_WORKING) return;
         gap_local_bd_addr(local_addr);
@@ -234,12 +237,15 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
       break;
 
     case HCI_EVENT_DISCONNECTION_COMPLETE:
+      printf("packet_handler(): HCI_EVENT_DISCONNECTION_COMPLETE\n");
       le_notification_enabled = 0;
       break;
     case ATT_EVENT_CAN_SEND_NOW:
+      printf("packet_handler(): ATT_EVENT_CAN_SEND_NOW\n");
       att_server_notify(con_handle, ATT_CHARACTERISTIC_0000FF11_0000_1000_8000_00805F9B34FB_01_VALUE_HANDLE, (uint8_t*) counter_string, counter_string_len);
       break;
     default:
+      printf("packet_handler(): unhandled (%d)\n", pt);
       break;
   }
 }
@@ -264,6 +270,7 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
 static uint16_t att_read_callback(hci_con_handle_t connection_handle, uint16_t att_handle, uint16_t offset, uint8_t * buffer, uint16_t buffer_size){
   UNUSED(connection_handle);
 
+  printf("att_read_callback()\n");
   if (att_handle == ATT_CHARACTERISTIC_0000FF11_0000_1000_8000_00805F9B34FB_01_VALUE_HANDLE){
     return att_read_callback_handle_blob((const uint8_t *)counter_string, counter_string_len, offset, buffer, buffer_size);
   }
@@ -287,6 +294,7 @@ static uint16_t att_read_callback(hci_con_handle_t connection_handle, uint16_t a
 static int att_write_callback(hci_con_handle_t connection_handle, uint16_t att_handle, uint16_t transaction_mode, uint16_t offset, uint8_t *buffer, uint16_t buffer_size){
   switch (att_handle){
     case ATT_CHARACTERISTIC_0000FF11_0000_1000_8000_00805F9B34FB_01_CLIENT_CONFIGURATION_HANDLE:
+      printf("att_write_callback(): CLIENT_CONFIGURATION_HANDLE\n");
       le_notification_enabled = little_endian_read_16(buffer, 0) == GATT_CLIENT_CHARACTERISTICS_CONFIGURATION_NOTIFICATION;
       con_handle = connection_handle;
       break;
