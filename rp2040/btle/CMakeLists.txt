@@ -21,6 +21,9 @@ project(hello-pico C CXX ASM)
 
 pico_sdk_init()
 
+message(XXXX ${CMAKE_CURRENT_LIST_DIR})
+include_directories(${CMAKE_CURRENT_LIST_DIR})
+
 add_executable(btle_gatt_server btle_gatt_server.cpp)
 target_link_libraries(btle_gatt_server
   pico_stdlib
@@ -28,6 +31,7 @@ target_link_libraries(btle_gatt_server
   btstack
   bluetooth
   cyw43_btstack
+  pico_btstack_ble
 )
 # create map/bin/hex/uf2 file etc.
 pico_add_extra_outputs(btle_gatt_server)
