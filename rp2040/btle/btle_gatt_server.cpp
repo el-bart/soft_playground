@@ -61,6 +61,7 @@
 #include "btstack.h"
 #include "btstack_run_loop.h"
 #include "ble/gatt-service/battery_service_server.h"
+#include "gap.h"
 
 // App headers
 #include "led.hpp"
@@ -120,8 +121,26 @@ static void setup_gatt_service(void){
 
   l2cap_init();
 
-  // setup SM: Display only
+  // setup Security Manager
   sm_init();
+  //sm_set_io_capabilities(IO_CAPABILITY_KEYBOARD_ONLY);  // triggers PIN
+  //sm_set_io_capabilities(IO_CAPABILITY_DISPLAY_ONLY);
+
+  // TODO...
+  // see:
+  //  * https://bluekitchen-gmbh.com/btstack/#profiles/#gatt-server
+  //  * lib/btstack/example/sm_pairing_central.c
+  //  * lib/btstack/src/bluetooth.h
+  //  * lib/btstack/src/btstack_defines.h
+  //  * lib/btstack/src/gap.h
+  //  * lib/btstack/tool/compile_gatt.py
+  gatt_client_set_required_security_level(LEVEL_4);
+  // LE Secure Pairing, Passkey entry initiator (us) displays, responder enters
+  sm_set_io_capabilities(IO_CAPABILITY_DISPLAY_ONLY);
+  sm_set_authentication_requirements(SM_AUTHREQ_SECURE_CONNECTION | SM_AUTHREQ_MITM_PROTECTION);
+  // disable legacy pairing
+  sm_set_secure_connections_only_mode(true);
+
 
 #ifdef ENABLE_GATT_OVER_CLASSIC
   // init SDP, create record for GATT and register with SDP
@@ -258,6 +277,59 @@ static void packet_handler (uint8_t packet_type, uint16_t channel, uint8_t *pack
       uint16_t attribute_handle = (packet[1] | (packet[2] << 8));
       // Provide the data back to the BLE stack here
       att_server_notify_read(con_handle, attribute_handle, (uint8_t*) counter_string, counter_string_len);
+      break;
+      */
+      /*
+    case HCI_EVENT_PIN_CODE_REQUEST:
+      // inform about pin code request
+      {
+        bd_addr_t event_addr;
+        printf("Pin code request - using '1234'\n");
+        hci_event_pin_code_request_get_bd_addr(packet, event_addr);
+        gap_pin_code_response(event_addr, "1234");
+      }
+      break;
+      */
+
+    case HCI_EVENT_USER_CONFIRMATION_REQUEST:
+      // ssp: inform about user confirmation request
+      printf("SSP User Confirmation Request with numeric value '%06"/*PRIu32*/"'\n", little_endian_read_32(packet, 8));
+      printf("SSP User Confirmation Auto accept\n");
+      break;
+
+      /*
+    case RFCOMM_EVENT_INCOMING_CONNECTION:
+      {
+        bd_addr_t event_addr;
+        rfcomm_event_incoming_connection_get_bd_addr(packet, event_addr);
+        auto const rfcomm_channel_nr = rfcomm_event_incoming_connection_get_server_channel(packet);
+        auto const rfcomm_channel_id = rfcomm_event_incoming_connection_get_rfcomm_cid(packet);
+        printf("RFCOMM channel %u requested for %s\n", rfcomm_channel_nr, bd_addr_to_str(event_addr));
+        rfcomm_accept_connection(rfcomm_channel_id);
+      }
+      break;
+
+    case RFCOMM_EVENT_CHANNEL_OPENED:
+      if (rfcomm_event_channel_opened_get_status(packet)) {
+        printf("RFCOMM channel open failed, status 0x%02x\n", rfcomm_event_channel_opened_get_status(packet));
+      } else {
+        auto const rfcomm_channel_id = rfcomm_event_channel_opened_get_rfcomm_cid(packet);
+        auto const mtu = rfcomm_event_channel_opened_get_max_frame_size(packet);
+        printf("RFCOMM channel open succeeded. New RFCOMM Channel ID %u, max frame size %u\n", rfcomm_channel_id, mtu);
+      }
+      break;
+      */
+
+      /*
+    case RFCOMM_EVENT_CAN_SEND_NOW:
+      rfcomm_send(rfcomm_channel_id, (uint8_t*) lineBuffer, (uint16_t) strlen(lineBuffer));
+      break;
+      */
+
+      /*
+    case RFCOMM_EVENT_CHANNEL_CLOSED:
+      printf("RFCOMM channel closed\n");
+      rfcomm_channel_id = 0;
       break;
       */
 
